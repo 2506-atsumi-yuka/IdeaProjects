@@ -2,6 +2,7 @@ package com.example.forum.controller;
 
 import com.example.forum.controller.form.CommentForm;
 import com.example.forum.controller.form.ReportForm;
+import com.example.forum.service.CommentService;
 import com.example.forum.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,10 +24,19 @@ public class ForumController {
         ModelAndView mav = new ModelAndView();
         // 投稿を全件取得
         List<ReportForm> contentData = reportService.findAllReport();
+        // コメント内容を表示
+        List<CommentForm> commentData = commentService.findAllComment();
+        // form用の空のentityを準備
+        CommentForm commentForm = new CommentForm();
         // 画面遷移先を指定
         mav.setViewName("/top");
         // 投稿データオブジェクトを保管
         mav.addObject("contents", contentData);
+        mav.addObject("comments", commentData);
+
+        // コメント用に、準備した空のFormを保管
+        mav.addObject("formModel", commentForm);
+
         return mav;
     }
 
@@ -96,11 +106,13 @@ public class ForumController {
         return new ModelAndView("redirect:/");
     }
 
+    @Autowired
+    CommentService commentService;
     /*
      * コメントの投稿
      */
-    @PostMapping("/insert/{id}")
-    public ModelAndView insertContent(@ModelAttribute("formModel") CommentForm commentForm) {
+    @PostMapping("/addComment")
+    public ModelAndView addComment(@ModelAttribute("formModel") CommentForm commentForm) {
         // 投稿をテーブルに格納
         commentService.saveComment(commentForm);
         // rootへリダイレクト

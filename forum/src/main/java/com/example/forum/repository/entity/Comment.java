@@ -6,19 +6,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "comment")
+@Getter
+@Setter
 public class Comment {
+
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column
-    private String content;
+    private String comment;
 
     @Column
-    private int commentId;
+    private int contentId;
+
+
 }
 

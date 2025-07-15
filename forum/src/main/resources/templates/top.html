@@ -30,10 +30,20 @@
                 <input type="button" value="編集">
             </a>
         </div>
-        <div class="comment-area">
-            <form th:action="@{/comment/{id}(id=${content.id})}" th:method="comment">
-                <input type="submit" value="コメント">
-            </form>
+
+        <!--コメント投稿欄-->
+        <form method="post" action="/addComment" th:object="${formModel}">
+            <div class="comment-area">
+                <textarea class="comment-box" th:field="*{comment}" size="20" maxlength="200"/></textarea><br/>
+                <input type="hidden" name="contentId" th:value="${content.id}"/>
+                <input type="submit" value="コメント"/>
+            </div>
+        </form>
+        <!--コメントの表示-->
+        <div class="comment" th:each="comment : ${comments}">
+            <div th:if="${comment.contentId} == ${content.id}">
+                コメント : <span th:text="${comment.comment}"/>
+            </div>
         </div>
     </div>
 </div>
