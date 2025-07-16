@@ -118,6 +118,35 @@ public class ForumController {
         // rootへリダイレクト
         return new ModelAndView("redirect:/");
     }
+
+    /*
+     * コメント編集画面表示
+     */
+    @GetMapping("/editComment/{id}")
+    public ModelAndView editComment(@PathVariable Integer id) {
+        ModelAndView mav = new ModelAndView();
+        // 編集する投稿を取得
+        CommentForm comment = commentService.editComment(id);
+        // 編集する投稿をセット
+        mav.addObject("formModel", comment);
+        // 画面遷移先を指定
+        mav.setViewName("/editComment");
+        return mav;
+    }
+
+    /*
+     * コメント編集処理
+     */
+    @PutMapping("/updateComment/{id}")
+    public ModelAndView updateComment(@PathVariable Integer id,
+                                      @ModelAttribute("formModel") CommentForm comment) {
+        // UrlParameterのidを更新するentityにセット
+        comment.setId(id);
+        // 編集した投稿を更新
+        commentService.saveComment(comment);
+        // rootへリダイレクト
+        return new ModelAndView("redirect:/");
+    }
 }
 
 

@@ -42,7 +42,19 @@
         <!--コメントの表示-->
         <div class="comment" th:each="comment : ${comments}">
             <div th:if="${comment.contentId} == ${content.id}">
+                <div>
                 コメント : <span th:text="${comment.comment}"/>
+                </div>
+                <div class="edit-button">
+                    <a th:href="@{/editComment/{id}(id=${comment.id})}">
+                        <input type="button" value="編集">
+                    </a>
+                </div>
+                <div class="delete-button">
+                    <form th:action="@{/deleteComment/{id}(id=${comment.id})}" th:method="delete">
+                        <input type="submit" value="削除">
+                    </form>
+                </div>
             </div>
         </div>
     </div>
