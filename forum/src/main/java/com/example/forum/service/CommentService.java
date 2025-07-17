@@ -57,6 +57,7 @@ public class CommentService {
         comment.setId(reqComment.getId());
         comment.setComment(reqComment.getComment());
         comment.setContentId(reqComment.getContentId());
+        comment.setUpdatedDate(reqComment.getUpdatedDate());
         return comment;
     }
 
@@ -68,5 +69,13 @@ public class CommentService {
         results.add((Comment) commentRepository.findById(id).orElse(null));
         List<CommentForm> comments = setCommentForm(results);
         return comments.get(0);
+    }
+
+    /*
+     *投稿の削除
+     */
+    public void deleteComment(Integer id) {
+        //idを指定してdelete文を実行したい
+        commentRepository.deleteById(id);
     }
 }

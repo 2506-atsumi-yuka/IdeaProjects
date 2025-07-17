@@ -6,8 +6,14 @@ import com.example.forum.repository.entity.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @Service
 public class ReportService {
@@ -17,8 +23,30 @@ public class ReportService {
     /*
      * レコード全件取得処理
      */
-    public List<ReportForm> findAllReport() {
-        List<Report> results = reportRepository.findAllByOrderByIdDesc();
+    public List<ReportForm> findReport(String startDate, String endDate) throws ParseException {
+        //日付を絞り込む(SimpleDateFormatを使用したい日時表記の形式を指定してインスタンス化)
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (hasText(startDate)) {
+            startDate += " 00:00:00";
+        } else {
+            //デフォルト値
+            startDate = "2020-01-01 00:00:00";
+        }
+
+        if (hasText(endDate)) {
+            endDate += " 23:59:59";
+        } else {
+            //Dateのインスタンスを渡してフォーマットする
+            Date date = new Date();
+            endDate = sdf.format(date);
+        }
+        //Date型に変換
+        Date start = null;
+        Date end = null;
+        start = sdf.parse(startDate);
+        end = sdf.parse(endDate);
+
+        List<Report> results = reportRepository.findByCreatedDateBetweenOrderByUpdatedDateDesc(start, end);
         List<ReportForm> reports = setReportForm(results);
         return reports;
     }
@@ -34,6 +62,7 @@ public class ReportService {
             Report result = results.get(i);
             report.setId(result.getId());
             report.setContent(result.getContent());
+            report.setUpdatedDate(result.getUpdatedDate());
             reports.add(report);
         }
         return reports;
@@ -54,6 +83,7 @@ public class ReportService {
         Report report = new Report();
         report.setId(reqReport.getId());
         report.setContent(reqReport.getContent());
+        report.setUpdatedDate(reqReport.getUpdatedDate());
         return report;
     }
 

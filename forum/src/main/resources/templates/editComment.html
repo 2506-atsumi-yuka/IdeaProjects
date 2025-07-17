@@ -14,7 +14,8 @@
         <div class="edit-area">
             <label>コメント</label>
             <textarea class="edit-box" name="editComment" th:field="*{comment}" size="20" maxlength="200" /></textarea><br/>
-            <input type="submit" value="更新"/>
+            <input type="hidden" th:field="*{contentId}" />
+            <input type="submit" value="更新" />
         </div>
     </form>
 </div>
