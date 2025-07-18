@@ -37,6 +37,7 @@ public class CommentService {
             comment.setId(result.getId());
             comment.setComment(result.getComment());
             comment.setContentId(result.getContentId());
+            comment.setCreatedDate(result.getCreatedDate());
             comments.add(comment);
         }
         return comments;
@@ -58,6 +59,7 @@ public class CommentService {
         comment.setComment(reqComment.getComment());
         comment.setContentId(reqComment.getContentId());
         comment.setUpdatedDate(reqComment.getUpdatedDate());
+        comment.setCreatedDate(reqComment.getCreatedDate());
         return comment;
     }
 

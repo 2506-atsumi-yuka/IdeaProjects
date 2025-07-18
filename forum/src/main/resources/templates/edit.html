@@ -10,7 +10,13 @@
     <h2>編集</h2>
 </div>
 <div class="main-contents">
-    <form th:action="@{/updateComment/{id}(id=${formModel.id})}" th:object="${formModel}" th:method="put">
+    <!-- エラーメッセージ -->
+    <div class="error-massage">
+        <ul>
+            <li><span th:text="${errorMessages}"/></li>
+        </ul>
+    </div>
+    <form th:action="@{/update/{id}(id=${formModel.id})}" th:object="${formModel}" th:method="put">
         <div class="form-area">
             <label>投稿内容</label>
             <textarea class="tweet-box" name="content" th:field="*{content}" size="20" maxlength="200" /></textarea><br/>

@@ -19,6 +19,12 @@
             <input type="submit" value="絞り込み">
         </form>
     </div>
+    <!-- エラーメッセージ -->
+    <div class="error-massage">
+        <ul>
+            <li><span th:text="${errorMessages}"/></li>
+        </ul>
+    </div>
     <a href="/new">
         <button class="new-button" type="button">新規投稿</button>
     </a>
@@ -30,8 +36,7 @@
             投稿 : <span th:text="${content.content}"/>
         </div>
         <div class="date">
-            <fmt:formatDate value="${message.createdDate}"
-                            pattern="yyyy/MM/dd HH:mm:ss" />
+            <span th:text="${#dates.format(content.createdDate, 'yyyy/MM/dd HH:mm')}"></span>
         </div>
         <div class="delete-button">
             <form th:action="@{/delete/{id}(id=${content.id})}" th:method="delete">
@@ -57,6 +62,9 @@
             <div th:if="${comment.contentId} == ${content.id}">
                 <div>
                     コメント : <span th:text="${comment.comment}"/>
+                </div>
+                <div class="date">
+                    <span th:text="${#dates.format(comment.createdDate, 'yyyy/MM/dd HH:mm')}"/>
                 </div>
                 <div class="edit-button">
                     <a th:href="@{/editComment/{id}(id=${comment.contentId})}">

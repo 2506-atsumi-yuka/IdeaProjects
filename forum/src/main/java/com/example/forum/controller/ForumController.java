@@ -4,18 +4,26 @@ import com.example.forum.controller.form.CommentForm;
 import com.example.forum.controller.form.ReportForm;
 import com.example.forum.service.CommentService;
 import com.example.forum.service.ReportService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.text.ParseException;
 import java.util.List;
 
+import static org.springframework.util.StringUtils.hasText;
+import static org.thymeleaf.spring6.util.FieldUtils.hasErrors;
+
 @Controller
 public class ForumController {
     @Autowired
     ReportService reportService;
+    @Autowired
+    HttpSession session;
 
     /*
      * 投稿内容表示処理
@@ -37,7 +45,8 @@ public class ForumController {
 
         // コメント用に、準備した空のFormを保管
         mav.addObject("formModel", commentForm);
-
+        //バリデーション
+        setErrorMessage(mav);
         return mav;
     }
 
@@ -53,6 +62,8 @@ public class ForumController {
         mav.setViewName("/new");
         // 準備した空のFormを保管
         mav.addObject("formModel", reportForm);
+        //バリデーション
+        setErrorMessage(mav);
         return mav;
     }
 
@@ -60,7 +71,13 @@ public class ForumController {
      * 新規投稿処理
      */
     @PostMapping("/add")
-    public ModelAndView addContent(@ModelAttribute("formModel") ReportForm reportForm) {
+    public ModelAndView addContent(@Validated @ModelAttribute("formModel") ReportForm reportForm, BindingResult result) {
+        //バリデーション
+        if (result.hasErrors()) {
+            session.setAttribute("errorMessages", "投稿内容を入力してください");
+            return new ModelAndView("redirect:/new");
+        }
+
         // 投稿をテーブルに格納
         reportService.saveReport(reportForm);
         // rootへリダイレクト
@@ -90,6 +107,8 @@ public class ForumController {
         mav.addObject("formModel", report);
         // 画面遷移先を指定
         mav.setViewName("/edit");
+        //バリデーション
+        setErrorMessage(mav);
         return mav;
     }
 
@@ -98,7 +117,12 @@ public class ForumController {
      */
     @PutMapping("/update/{id}")
     public ModelAndView updateContent(@PathVariable Integer id,
-                                      @ModelAttribute("formModel") ReportForm report) {
+                                      @Validated @ModelAttribute("formModel") ReportForm report, BindingResult result) {
+        // バリデーション
+        if (result.hasErrors()) {
+            session.setAttribute("errorMessages", "投稿内容を入力してください");
+            return new ModelAndView("redirect:/edit/{id}");
+        }
         // UrlParameterのidを更新するentityにセット
         report.setId(id);
         // 編集した投稿を更新
@@ -109,11 +133,18 @@ public class ForumController {
 
     @Autowired
     CommentService commentService;
+
     /*
      * コメントの投稿
      */
     @PostMapping("/addComment")
-    public ModelAndView addComment(@ModelAttribute("formModel") CommentForm commentForm) {
+    public ModelAndView addComment(@Validated @ModelAttribute("formModel") CommentForm commentForm, BindingResult result) {
+        // バリデーション
+        if (result.hasErrors()) {
+            session.setAttribute("errorMessages", "投稿内容を入力してください");
+            session.setAttribute("errorMessages", "コメントを入力してください");
+            return new ModelAndView("redirect:/");
+        }
         // 投稿をテーブルに格納
         commentService.saveComment(commentForm);
         // rootへリダイレクト
@@ -132,6 +163,8 @@ public class ForumController {
         mav.addObject("formModel", comment);
         // 画面遷移先を指定
         mav.setViewName("/editComment");
+        //バリデーション
+        setErrorMessage(mav);
         return mav;
     }
 
@@ -140,7 +173,12 @@ public class ForumController {
      */
     @PutMapping("/updateComment/{id}")
     public ModelAndView updateComment(@PathVariable Integer id,
-                                      @ModelAttribute("formModel") CommentForm comment) {
+                                      @Validated @ModelAttribute("formModel") CommentForm comment, BindingResult result) {
+        // バリデーション
+        if (result.hasErrors()) {
+            session.setAttribute("errorMessages", "コメントを入力してください");
+            return new ModelAndView("redirect:/editComment/{id}");
+        }
         // UrlParameterのidを更新するentityにセット
         comment.setId(id);
         // 編集した投稿を更新
@@ -159,6 +197,17 @@ public class ForumController {
         // rootへリダイレクト
         return new ModelAndView("redirect:/");
     }
+
+    /*
+     *バリデーション
+     */
+    private void setErrorMessage(ModelAndView mav) {
+        if (session.getAttribute("errorMessages") != null) {
+            mav.addObject("errorMessages", session.getAttribute("errorMessages"));
+
+            // sessionの破棄
+            session.invalidate();
+        }
+
+    }
 }
-
-

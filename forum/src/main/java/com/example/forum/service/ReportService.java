@@ -6,7 +6,6 @@ import com.example.forum.repository.entity.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,6 +62,7 @@ public class ReportService {
             report.setId(result.getId());
             report.setContent(result.getContent());
             report.setUpdatedDate(result.getUpdatedDate());
+            report.setCreatedDate(result.getCreatedDate());
             reports.add(report);
         }
         return reports;
@@ -96,7 +96,7 @@ public class ReportService {
     }
 
     /*
-     * レコード1件取得
+     * 編集対象のレコードを1件取得
      */
     public ReportForm editReport(Integer id) {
         List<Report> results = new ArrayList<>();
