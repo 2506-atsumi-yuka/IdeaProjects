@@ -141,8 +141,9 @@ public class ForumController {
     public ModelAndView addComment(@Validated @ModelAttribute("formModel") CommentForm commentForm, BindingResult result) {
         // バリデーション
         if (result.hasErrors()) {
-            session.setAttribute("errorMessages", "投稿内容を入力してください");
             session.setAttribute("errorMessages", "コメントを入力してください");
+            // コメントに対応する投稿のIDを取得
+            session.setAttribute("contentId", commentForm.getContentId());
             return new ModelAndView("redirect:/");
         }
         // 投稿をテーブルに格納
@@ -204,7 +205,10 @@ public class ForumController {
     private void setErrorMessage(ModelAndView mav) {
         if (session.getAttribute("errorMessages") != null) {
             mav.addObject("errorMessages", session.getAttribute("errorMessages"));
-
+            //コメント付近に表示させるためにreportIdを追加
+            if (session.getAttribute("contentId") != null) {
+                mav.addObject("contentId", session.getAttribute("contentId"));
+            }
             // sessionの破棄
             session.invalidate();
         }
