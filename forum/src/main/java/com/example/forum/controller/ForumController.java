@@ -205,7 +205,7 @@ public class ForumController {
     private void setErrorMessage(ModelAndView mav) {
         if (session.getAttribute("errorMessages") != null) {
             mav.addObject("errorMessages", session.getAttribute("errorMessages"));
-            //コメント付近に表示させるためにreportIdを追加
+            //コメント付近に表示させるためにcontentIdを追加
             if (session.getAttribute("contentId") != null) {
                 mav.addObject("contentId", session.getAttribute("contentId"));
             }
